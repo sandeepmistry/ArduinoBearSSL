@@ -1,8 +1,32 @@
+/*
+ * Copyright (c) 2018 Arduino SA. All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining 
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be 
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+ * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+ * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 #include "bearssl/bearssl_hash.h"
 
-#include "ECC508.h"
+#include "ArduinoECCX08.h"
 
-#include "ECC508CSR.h"
+#include "ECCX08CSR.h"
 
 static String base64Encode(const byte in[], unsigned int length, const char* prefix, const char* suffix)
 {
@@ -53,11 +77,11 @@ static String base64Encode(const byte in[], unsigned int length, const char* pre
   return out;
 }
 
-ECC508CSRClass::ECC508CSRClass()
+ECCX08CSRClass::ECCX08CSRClass()
 {
 }
 
-ECC508CSRClass::~ECC508CSRClass()
+ECCX08CSRClass::~ECCX08CSRClass()
 {
 }
 
@@ -69,16 +93,16 @@ ECC508CSRClass::~ECC508CSRClass()
 #define ASN1_SEQUENCE          0x30
 #define ASN1_SET               0x31
 
-int ECC508CSRClass::begin(int slot, bool newPrivateKey)
+int ECCX08CSRClass::begin(int slot, bool newPrivateKey)
 {
   _slot = slot;
 
   if (newPrivateKey) {
-    if (!ECC508.generatePrivateKey(slot, _publicKey)) {
+    if (!ECCX08.generatePrivateKey(slot, _publicKey)) {
       return 0;
     }
   } else {
-    if (!ECC508.generatePublicKey(slot, _publicKey)) {
+    if (!ECCX08.generatePublicKey(slot, _publicKey)) {
       return 0;
     }
   }
@@ -86,7 +110,7 @@ int ECC508CSRClass::begin(int slot, bool newPrivateKey)
   return 1;
 }
 
-String ECC508CSRClass::end()
+String ECCX08CSRClass::end()
 {
   byte csrBuffer[1024];
   byte* csr = csrBuffer;
@@ -102,7 +126,7 @@ String ECC508CSRClass::end()
   br_sha256_update(&sha256Context, &csr[4], csrInfoLength);
   br_sha256_out(&sha256Context, csrInfoSha256);
 
-  if (!ECC508.ecSign(_slot, csrInfoSha256, signedCsrInfoSha256)) {
+  if (!ECCX08.ecSign(_slot, csrInfoSha256, signedCsrInfoSha256)) {
     return "";
   }
 
@@ -125,37 +149,37 @@ String ECC508CSRClass::end()
   return base64Encode(csr, csrLength, "-----BEGIN CERTIFICATE REQUEST-----\n", "\n-----END CERTIFICATE REQUEST-----\n");
 }
 
-void ECC508CSRClass::setCountryName(const char *countryName)
+void ECCX08CSRClass::setCountryName(const char *countryName)
 {
   _countryName = countryName;
 }
 
-void ECC508CSRClass::setStateProvinceName(const char* stateProvinceName)
+void ECCX08CSRClass::setStateProvinceName(const char* stateProvinceName)
 {
   _stateProvinceName = stateProvinceName;
 }
 
-void ECC508CSRClass::setLocalityName(const char* localityName)
+void ECCX08CSRClass::setLocalityName(const char* localityName)
 {
   _localityName = localityName;
 }
 
-void ECC508CSRClass::setOrganizationName(const char* organizationName)
+void ECCX08CSRClass::setOrganizationName(const char* organizationName)
 {
   _organizationName = organizationName;
 }
 
-void ECC508CSRClass::setOrganizationalUnitName(const char* organizationalUnitName)
+void ECCX08CSRClass::setOrganizationalUnitName(const char* organizationalUnitName)
 {
   _organizationalUnitName = organizationalUnitName;
 }
 
-void ECC508CSRClass::setCommonName(const char* commonName)
+void ECCX08CSRClass::setCommonName(const char* commonName)
 {
   _commonName = commonName;
 }
 
-int ECC508CSRClass::encodeCsrInfo(byte buffer[])
+int ECCX08CSRClass::encodeCsrInfo(byte buffer[])
 {
   int index = 0;
 
@@ -243,7 +267,7 @@ int ECC508CSRClass::encodeCsrInfo(byte buffer[])
   return index;
 }
 
-int ECC508CSRClass::encodeEcdsaSignature(const byte signature[], byte buffer[])
+int ECCX08CSRClass::encodeEcdsaSignature(const byte signature[], byte buffer[])
 {
   int index = 0;
 
@@ -318,7 +342,7 @@ int ECC508CSRClass::encodeEcdsaSignature(const byte signature[], byte buffer[])
   return index;
 }
 
-int ECC508CSRClass::encodeName(const char* name, int length, int type, byte buffer[])
+int ECCX08CSRClass::encodeName(const char* name, int length, int type, byte buffer[])
 {
   int index = 0;
 
@@ -342,7 +366,7 @@ int ECC508CSRClass::encodeName(const char* name, int length, int type, byte buff
   return index;
 }
 
-int ECC508CSRClass::encodePublicKey(byte buffer[])
+int ECCX08CSRClass::encodePublicKey(byte buffer[])
 {
   int subjectPublicKeyDataLength = 5 + sizeof(_publicKey) + 9 + 10;
   int index = 0;
@@ -388,4 +412,4 @@ int ECC508CSRClass::encodePublicKey(byte buffer[])
   return index;
 }
 
-ECC508CSRClass ECC508CSR;
+ECCX08CSRClass ECCX08CSR;

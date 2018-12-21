@@ -1,12 +1,36 @@
-#ifndef _ECC508_CSR_H_
-#define _ECC508_CSR_H_
+/*
+ * Copyright (c) 2018 Arduino SA. All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining 
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be 
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+ * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+ * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+#ifndef _ECCX08_CSR_H_
+#define _ECCX08_CSR_H_
 
 #include <Arduino.h>
 
-class ECC508CSRClass {
+class ECCX08CSRClass {
 public:
-  ECC508CSRClass();
-  virtual ~ECC508CSRClass();
+  ECCX08CSRClass();
+  virtual ~ECCX08CSRClass();
 
   int begin(int slot, bool newPrivateKey = true);
   String end();
@@ -49,6 +73,6 @@ private:
   byte _publicKey[64];
 };
 
-extern ECC508CSRClass ECC508CSR;
+extern ECCX08CSRClass ECCX08CSR;
 
 #endif

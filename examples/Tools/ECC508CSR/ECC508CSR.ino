@@ -1,36 +1,40 @@
+#include <ArduinoECCX08.h>
 #include <ArduinoBearSSL.h>
-#include <utility/ECC508.h>
-#include <utility/ECC508CSR.h>
-#include <utility/ECC508TLSConfig.h>
+#include <utility/ECCX08CSR.h>
+#include <utility/ECCX08TLSConfig.h>
 
 void setup() {
   Serial.begin(9600);
   while (!Serial);
 
-  if (!ECC508.begin()) {
+  if (!ECCX08.begin()) {
     Serial.println("No ECC508 present!");
     while (1);
   }
 
-  if (!ECC508.locked()) {
-    String lock = promptAndReadLine("The ECC508 on your board is not locked, would you like to configure and lock it now? (y/N): ");
+  Serial.print("ECCX08 Serial Number = ");
+  Serial.println(ECCX08.serialNumber());
+  Serial.println();
+
+  if (!ECCX08.locked()) {
+    String lock = promptAndReadLine("The ECCX08 on your board is not locked, would you like to configure and lock it now? (y/N): ");
 
     if (!lock.startsWith("y")) {
       Serial.println("Unfortunately you can't proceed without locking it :(");
       while (1);
     }
 
-    if (!ECC508.writeConfiguration(DEFAULT_ECC508_TLS_CONFIG)) {
-      Serial.println("Writing ECC508 configuration failed!");
+    if (!ECCX08.writeConfiguration(DEFAULT_ECCX08_TLS_CONFIG)) {
+      Serial.println("Writing ECCX08 configuration failed!");
       while (1);
     }
 
-    if (!ECC508.lock()) {
+    if (!ECCX08.lock()) {
       Serial.println("Locking ECC508 configuration failed!");
       while (1);
     }
 
-    Serial.println("ECC508 locked successfully");
+    Serial.println("ECCX08 locked successfully");
     Serial.println();
   }
 
@@ -50,19 +54,19 @@ void setup() {
 
   generateNewKey.toLowerCase();
 
-  if (!ECC508CSR.begin(slot.toInt(), generateNewKey.startsWith("y"))) {
+  if (!ECCX08CSR.begin(slot.toInt(), generateNewKey.startsWith("y"))) {
     Serial.println("Error starting CSR generation!");
     while (1);
   }
 
-  ECC508CSR.setCountryName(country);
-  ECC508CSR.setStateProvinceName(stateOrProvince);
-  ECC508CSR.setLocalityName(locality);
-  ECC508CSR.setOrganizationName(organization);
-  ECC508CSR.setOrganizationalUnitName(organizationalUnit);
-  ECC508CSR.setCommonName(common);
+  ECCX08CSR.setCountryName(country);
+  ECCX08CSR.setStateProvinceName(stateOrProvince);
+  ECCX08CSR.setLocalityName(locality);
+  ECCX08CSR.setOrganizationName(organization);
+  ECCX08CSR.setOrganizationalUnitName(organizationalUnit);
+  ECCX08CSR.setCommonName(common);
 
-  String csr = ECC508CSR.end();
+  String csr = ECCX08CSR.end();
 
   if (!csr) {
     Serial.println("Error generating CSR!");
